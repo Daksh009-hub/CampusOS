@@ -1,7 +1,6 @@
-import { Request, Response } from 'express';
-import { prisma } from '../lib/prisma.js';
+let clubs = []; 
 
-export const createClub = async (req: Request, res: Response) => {
+const createClub = async (req, res) => {
   try {
     const { name, description, logoUrl } = req.body;
 
@@ -9,13 +8,14 @@ export const createClub = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Club name is required' });
     }
 
-    const newClub = await prisma.club.create({
-      data: {
-        name,
-        description,
-        logoUrl,
-      },
-    });
+    const newClub = {
+      id: Date.now().toString(), 
+      name,
+      description,
+      logoUrl,
+    };
+
+    clubs.push(newClub);
 
     return res.status(201).json({ success: true, data: newClub });
   } catch (error) {
@@ -23,3 +23,5 @@ export const createClub = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+module.exports = { createClub };

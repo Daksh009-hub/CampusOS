@@ -1,8 +1,8 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import clubRoutes from './routes/clubRoutes.js';
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const clubRoutes = require('./routes/clubRoutes');
 
 const app  = express();
 
@@ -20,4 +20,4 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/clubs', clubRoutes);
 
-export default app;
+module.exports = app;
