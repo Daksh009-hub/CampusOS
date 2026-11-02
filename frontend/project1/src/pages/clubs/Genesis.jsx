@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { Target, Trophy, Users, CalendarDays, Mail, Sparkles, Lightbulb, Instagram, Linkedin } from 'lucide-react';
+import { Target, Trophy, Users, CalendarDays, Mail, Sparkles, Lightbulb } from 'lucide-react';
 
 function Genesis() {
   const events = [
