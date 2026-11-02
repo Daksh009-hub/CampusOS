@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { Target, Trophy, Users, CalendarDays, Mail, Cpu, Zap, Linkedin, Instagram } from 'lucide-react';
+import { Target, Trophy, Users, CalendarDays, Mail, Cpu, Zap } from 'lucide-react';
 
 function Elektron() {
   const events = [
