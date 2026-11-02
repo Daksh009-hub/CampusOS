@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { Target, Trophy, Users, CalendarDays, Mail, Globe, Instagram, Linkedin, Sparkles, Code2 } from 'lucide-react';
+import { Target, Trophy, Users, CalendarDays, Mail, Globe, Sparkles, Code2 } from 'lucide-react';
 
 function GDGC() {
   const events = [
