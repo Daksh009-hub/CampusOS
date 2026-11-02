@@ -1,4 +1,5 @@
-
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Code2,
   Rocket,
@@ -16,8 +17,17 @@ const clubIcons = {
   Genesis: Lightbulb,
 };
 
+const routeMap = {
+  GDGC: '/clubs/gdgc',
+  'E-Cell': '/clubs/ecell',
+  SAE: '/clubs/sae',
+  Elektron: '/clubs/elektron',
+  Genesis: '/clubs/genesis',
+};
+
 function ClubCard({ name, description }) {
   const Icon = clubIcons[name] || Lightbulb;
+  const targetRoute = routeMap[name] || '/';
 
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-[#10172A] to-[#080D1C] p-7 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/10">
@@ -40,9 +50,9 @@ function ClubCard({ name, description }) {
         {description}
       </p>
 
-      {/* View Details */}
-      <a
-        href="#events"
+      {/* View Details Link */}
+      <Link
+        to={targetRoute}
         className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 transition duration-300 hover:text-white"
       >
         View Details
@@ -50,7 +60,7 @@ function ClubCard({ name, description }) {
           size={17}
           className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
         />
-      </a>
+      </Link>
 
       {/* Bottom Gradient Line */}
       <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-500 group-hover:w-full" />
