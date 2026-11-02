@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { Target, Trophy, Users, CalendarDays, Mail, Car, Wrench, Globe, Instagram } from 'lucide-react';
+import { Target, Trophy, Users, CalendarDays, Mail, Car, Wrench, Globe } from 'lucide-react';
 
 function SAE() {
   const events = [
