@@ -5,28 +5,26 @@ import {
   Rocket,
   Car,
   Cpu,
-  Dna
+  Dna,
+  Lightbulb,
+  ArrowUpRight,
 } from 'lucide-react';
 
 const clubIcons = {
   GDGC: Code2,
   'E-Cell': Rocket,
+  Ecell: Rocket,
   SAE: Car,
   Elektron: Cpu,
   Genesis: Dna,
 };
 
-const routeMap = {
-  GDGC: '/clubs/gdgc',
-  'E-Cell': '/clubs/ecell',
-  SAE: '/clubs/sae',
-  Elektron: '/clubs/elektron',
-  Genesis: '/clubs/genesis',
-};
-
 function ClubCard({ name, description }) {
   const Icon = clubIcons[name] || Lightbulb;
-  const targetRoute = routeMap[name] || '/';
+
+  // Convert name to lowercase slug (e.g., "E-Cell" -> "ecell", "GDGC" -> "gdgc")
+  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const targetRoute = `/clubs/${slug}`;
 
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-[#10172A] to-[#080D1C] p-7 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/10">
