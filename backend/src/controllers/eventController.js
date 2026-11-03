@@ -1,18 +1,25 @@
-const Event = require('../../models/event');
+const Post = require('../../models/event');
+
+const getPostFields = (body) => {
+  const fields = {};
+
+  for (const field of ['title', 'description', 'imageUrl', 'eventDate', 'createdAt', 'createdBy']) {
+    if (body[field] !== undefined) {
+      fields[field] = body[field];
+    }
+  }
+
+  if (fields.eventDate === undefined && body.date !== undefined) {
+    fields.eventDate = body.date;
+  }
+
+  return fields;
+};
 
 // 1. CREATE EVENT
 const createEvent = async (req, res) => {
   try {
-    const { title, description, date, location, clubId, imageUrl } = req.body;
-
-    const newEvent = await Event.create({
-      title,
-      description,
-      date,
-      location,
-      clubId,
-      imageUrl
-    });
+    const newEvent = await Post.create(getPostFields(req.body));
 
     return res.status(201).json({
       success: true,
@@ -32,7 +39,7 @@ const createEvent = async (req, res) => {
 // 2. GET ALL EVENTS
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();
+    const events = await Post.find();
 
     return res.status(200).json({
       success: true,
@@ -52,7 +59,7 @@ const getAllEvents = async (req, res) => {
 // 3. GET SINGLE EVENT
 const getEventById = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id);
+    const event = await Post.findById(req.params.id);
 
     if (!event) {
       return res.status(404).json({
@@ -77,9 +84,9 @@ const getEventById = async (req, res) => {
 // 4. UPDATE EVENT
 const updateEvent = async (req, res) => {
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(
+    const updatedEvent = await Post.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      getPostFields(req.body),
       {
         new: true,
         runValidators: true
@@ -111,7 +118,7 @@ const updateEvent = async (req, res) => {
 // 5. DELETE EVENT
 const deleteEvent = async (req, res) => {
   try {
-    const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+    const deletedEvent = await Post.findByIdAndDelete(req.params.id);
 
     if (!deletedEvent) {
       return res.status(404).json({
