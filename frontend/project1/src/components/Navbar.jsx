@@ -11,7 +11,7 @@ import {
 import logo from '../assets/logo.png';
 feature/student-profile
 
-import { Link } from 'react-router-dom';
+
 main
 import ProfileDropdown from './ProfileDropdown';
 
