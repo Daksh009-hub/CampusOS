@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const readline = require('readline');
 const User = require('./models/user');
 
@@ -14,26 +14,30 @@ const seedUser = async () => {
     await mongoose.connect(process.env.MONGO_URL);
     console.log('Connected to Database successfully! 🚀\n');
 
-    rl.question('Enter Admin Email: ', (email) => {
-      rl.question('Enter Admin Password: ', async (plainPassword) => {
-        try {
-          const hashedPassword = await bcrypt.hash(plainPassword, 10);
+    rl.question('Enter Admin Name: ', (name) => {
+      rl.question('Enter Admin Email: ', (email) => {
+        rl.question('Enter Admin Password: ', async (plainPassword) => {
+          try {
+            const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-          const newUser = new User({
-            email: email.trim(),
-            password: hashedPassword
-          });
+            const newUser = new User({
+              name: name.trim(),
+              email: email.trim(),
+              password: hashedPassword
+            });
 
-          await newUser.save();
-          console.log('User Seeded Successfully!');
-          console.log(`Email: ${email.trim()}`);
-          console.log(`Password: ${plainPassword}`);
-        } catch (err) {
-          console.error('Error saving user:', err.message);
-        } finally {
-          mongoose.connection.close();
-          rl.close();
-        }
+            await newUser.save();
+            console.log('User Seeded Successfully!');
+            console.log(`Name: ${name.trim()}`);
+            console.log(`Email: ${email.trim()}`);
+            console.log(`Password: ${plainPassword}`);
+          } catch (err) {
+            console.error('Error saving user:', err.message);
+          } finally {
+            mongoose.connection.close();
+            rl.close();
+          }
+        });
       });
     });
 

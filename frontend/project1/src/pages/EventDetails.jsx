@@ -1,16 +1,14 @@
 
 import { Link, useParams } from 'react-router-dom';
-import {
-  ArrowLeft,
-  CalendarDays,
-  Clock3,
-  MapPin,
-  Users,
-  Sparkles,
-  ArrowUpRight,
-} from 'lucide-react';
-
 import { dummyEvents } from '../data/events';
+
+const bannerStyles = {
+  GDGC: 'from-blue-700 via-indigo-700 to-cyan-500',
+  'E-Cell': 'from-purple-800 via-fuchsia-700 to-pink-500',
+  SAE: 'from-orange-700 via-red-700 to-amber-500',
+  Elektron: 'from-cyan-800 via-blue-700 to-indigo-500',
+  Genesis: 'from-emerald-800 via-teal-700 to-cyan-500',
+};
 
 function EventDetails() {
   const { id } = useParams();
@@ -19,23 +17,16 @@ function EventDetails() {
     (item) => item.id === Number(id)
   );
 
-  // Event not found
   if (!event) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#050816] px-6 text-center text-white">
-        <CalendarDays size={48} className="text-cyan-400" />
-
-        <h1 className="mt-5 text-3xl font-bold">
-          Event Not Found
-        </h1>
-
+        <h1 className="text-4xl font-bold">Event Not Found</h1>
         <p className="mt-3 text-slate-400">
           The event you are looking for does not exist.
         </p>
-
         <Link
           to="/"
-          className="mt-7 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white transition hover:scale-105"
+          className="mt-7 rounded-xl bg-cyan-500 px-6 py-3 font-semibold text-[#050816]"
         >
           Back to Home
         </Link>
@@ -43,109 +34,168 @@ function EventDetails() {
     );
   }
 
+  const highlights = [
+    'Learn from practical activities',
+    'Connect with fellow students',
+    'Explore new skills and opportunities',
+  ];
+
   return (
-    <div className="min-h-screen bg-[#050816] px-6 py-10 text-white">
+    <div className="min-h-screen bg-[#050816] text-white">
 
-      <div className="mx-auto max-w-5xl">
+      {/* Top Navigation */}
+      <nav className="border-b border-slate-800 bg-[#080D1C]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <Link to="/" className="text-2xl font-extrabold">
+            Campus<span className="text-cyan-400">OS</span>
+          </Link>
 
-        {/* Back Button */}
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-cyan-400"
+          <Link
+            to="/#events"
+            className="text-sm font-semibold text-slate-400 transition hover:text-cyan-400"
+          >
+            ← All Events
+          </Link>
+        </div>
+      </nav>
+
+      <main className="mx-auto max-w-6xl px-6 py-10">
+
+        {/* Hero Banner */}
+        <section
+          className={`relative flex min-h-[360px] flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br ${
+            bannerStyles[event.club] || 'from-blue-700 to-purple-700'
+          } p-8 md:p-14`}
         >
-          <ArrowLeft size={18} />
-          Back to Home
-        </Link>
-
-        {/* Event Hero */}
-        <section className="relative mt-10 overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-[#10172A] to-[#080D1C] p-8 md:p-14">
-
-          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-600/20 blur-[120px]" />
+          <div className="absolute -right-20 -top-24 h-80 w-80 rounded-full border border-white/20" />
+          <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full border border-white/20" />
 
           <div className="relative z-10">
-
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-xs font-semibold text-cyan-400">
+            <div className="mb-6 flex flex-wrap gap-3">
+              <span className="rounded-full border border-white/30 bg-black/20 px-4 py-2 text-sm backdrop-blur">
                 {event.club}
               </span>
-
-              <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-2 text-xs font-semibold text-purple-400">
+              <span className="rounded-full border border-white/30 bg-black/20 px-4 py-2 text-sm backdrop-blur">
                 {event.category}
               </span>
             </div>
 
-            <h1 className="mt-7 text-3xl font-extrabold leading-tight md:text-5xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
+              CampusOS Event
+            </p>
+
+            <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight md:text-6xl">
               {event.name}
             </h1>
 
-            <p className="mt-5 max-w-2xl leading-8 text-slate-400">
+            <p className="mt-5 max-w-2xl text-base leading-7 text-white/80 md:text-lg">
+              {event.description}
+            </p>
+          </div>
+        </section>
+
+        {/* Event Information */}
+        <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: '▦', label: 'Event Date', value: event.date },
+            { icon: '◷', label: 'Event Time', value: event.time },
+            { icon: '⌖', label: 'Venue', value: event.venue },
+            { icon: '✦', label: 'Organized By', value: event.club },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-2xl border border-slate-800 bg-[#10172A] p-6 transition hover:border-cyan-500/50"
+            >
+              <span className="text-3xl text-cyan-400">
+                {item.icon}
+              </span>
+              <p className="mt-4 text-sm text-slate-400">
+                {item.label}
+              </p>
+              <p className="mt-2 font-semibold text-white">
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        {/* About and Highlights */}
+        <section className="mt-16 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-cyan-400">
+              Event Overview
+            </p>
+
+            <h2 className="mt-3 text-3xl font-bold">
+              About This Event
+            </h2>
+
+            <p className="mt-6 leading-8 text-slate-400">
               {event.description}
             </p>
 
-            <div className="mt-9 grid gap-5 sm:grid-cols-2">
-
-              <div className="flex items-center gap-4 rounded-xl border border-slate-700 bg-white/[0.03] p-4">
-                <CalendarDays className="shrink-0 text-cyan-400" size={24} />
-                <div>
-                  <p className="text-xs text-slate-500">Event Date</p>
-                  <p className="mt-1 font-semibold">{event.date}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 rounded-xl border border-slate-700 bg-white/[0.03] p-4">
-                <Clock3 className="shrink-0 text-cyan-400" size={24} />
-                <div>
-                  <p className="text-xs text-slate-500">Event Time</p>
-                  <p className="mt-1 font-semibold">{event.time}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 rounded-xl border border-slate-700 bg-white/[0.03] p-4">
-                <MapPin className="shrink-0 text-cyan-400" size={24} />
-                <div>
-                  <p className="text-xs text-slate-500">Venue</p>
-                  <p className="mt-1 font-semibold">{event.venue}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 rounded-xl border border-slate-700 bg-white/[0.03] p-4">
-                <Users className="shrink-0 text-cyan-400" size={24} />
-                <div>
-                  <p className="text-xs text-slate-500">Organized By</p>
-                  <p className="mt-1 font-semibold">{event.club}</p>
-                </div>
-              </div>
-
-            </div>
-
+            <p className="mt-4 leading-8 text-slate-400">
+              Join us at UIET campus for this exciting event.
+              Participate, learn, share your ideas and connect
+              with other students.
+            </p>
           </div>
+
+          <div className="rounded-2xl border border-slate-800 bg-[#10172A] p-7">
+            <h3 className="text-xl font-bold">
+              What to Expect
+            </h3>
+
+            <div className="mt-6 space-y-5">
+              {highlights.map((highlight) => (
+                <div key={highlight} className="flex gap-3">
+                  <span className="text-cyan-400">✦</span>
+                  <p className="text-sm leading-6 text-slate-300">
+                    {highlight}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </section>
 
-        {/* About Event */}
-        <section className="py-12">
-
-          <div className="flex items-center gap-3">
-            <Sparkles size={23} className="text-cyan-400" />
-            <h2 className="text-2xl font-bold">About This Event</h2>
-          </div>
-
-          <p className="mt-5 max-w-3xl leading-8 text-slate-400">
-            {event.description}
+        {/* Registration */}
+        <section className="mt-16 rounded-3xl border border-cyan-500/20 bg-gradient-to-r from-blue-950/60 to-cyan-950/30 p-8 text-center md:p-12">
+          <p className="text-sm font-semibold uppercase tracking-widest text-cyan-400">
+            Be Part of It
           </p>
 
-          {/* Registration Button - UI only for now */}
+          <h2 className="mt-4 text-3xl font-extrabold">
+            Ready to Join This Event?
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-xl text-slate-400">
+            Don't miss this opportunity to learn, participate
+            and connect with the UIET community.
+          </p>
+
           <button
             type="button"
             disabled
-            className="mt-8 inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-7 py-3.5 font-semibold text-white opacity-70"
+            className="mt-8 cursor-not-allowed rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-8 py-4 font-bold text-white opacity-70"
           >
             Registration Coming Soon
-            <ArrowUpRight size={18} />
           </button>
-
         </section>
 
-      </div>
+        {/* Back Link */}
+        <div className="py-12 text-center">
+          <Link
+            to="/#events"
+            className="font-semibold text-cyan-400 transition hover:text-white"
+          >
+            ← Explore More Events
+          </Link>
+        </div>
+
+      </main>
     </div>
   );
 }
