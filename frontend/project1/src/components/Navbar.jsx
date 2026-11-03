@@ -9,6 +9,10 @@ import {
 } from 'lucide-react';
 
 import logo from '../assets/logo.png';
+feature/student-profile
+
+import { Link } from 'react-router-dom';
+main
 import ProfileDropdown from './ProfileDropdown';
 
 function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
@@ -60,17 +64,22 @@ function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
                 href={link.href}
                 className="group flex items-center gap-2 rounded-full px-5 py-2.5 text-base font-semibold text-slate-300 transition-all duration-300 hover:bg-cyan-400/10 hover:text-cyan-400"
               >
+feature/student-profile
                 <Icon
                   size={19}
                   strokeWidth={2}
                   className="transition-transform duration-300 group-hover:scale-110"
                 />
+
+                <Icon size={19} strokeWidth={2} />
+main
                 {link.name}
               </a>
             );
           })}
         </div>
 
+feature/student-profile
         <div className="flex items-center gap-4">
           {isClubHead && (
             <Link
@@ -92,6 +101,35 @@ function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
             </Link>
           )}
         </div>
+
+        {/* Login / Profile */}
+        
+{/* Right Side: Organize Event + Profile / Login */}
+<div className="flex items-center gap-4">
+  {isClubHead && (
+    <Link
+      to="/organize-event"
+      className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:scale-105"
+    >
+      + Organize Event
+    </Link>
+  )}
+
+  {isLoggedIn ? (
+    <ProfileDropdown
+      email={userEmail}
+      onLogout={onLogout}
+    />
+  ) : (
+    <Link
+      to="/login"
+      className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 text-sm font-bold text-white transition hover:scale-105"
+    >
+      Login
+    </Link>
+  )}
+</div>
+main
       </div>
     </nav>
   );
