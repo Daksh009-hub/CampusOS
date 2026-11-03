@@ -6,50 +6,9 @@ import {
   ArrowUpRight,
   Sparkles,
 } from 'lucide-react';
+import { dummyEvents } from '../data/Event';
 
-const dummyEvents = [
-  {
-    id: 1,
-    name: 'Web Dev Bootcamp',
-    date: '15 Nov 2026',
-    time: '10:00 AM',
-    venue: 'Room No. 100, UIET',
-    club: 'GDGC',
-  },
-  {
-    id: 2,
-    name: 'Startup Pitch Desk',
-    date: '18 Nov 2026',
-    time: '02:00 PM',
-    venue: 'MV Sadan',
-    club: 'E-Cell',
-  },
-  {
-    id: 3,
-    name: 'AutoCAD Workshop',
-    date: '20 Nov 2026',
-    time: '11:00 AM',
-    venue: 'Mechanical Block',
-    club: 'SAE',
-  },
-  {
-    id: 4,
-    name: 'Circuit Design 101',
-    date: '22 Nov 2026',
-    time: '01:00 PM',
-    venue: 'Room No. 100, UIET',
-    club: 'Elektron',
-  },
-  {
-    id: 5,
-    name: 'Genesis Ideathon',
-    date: '25 Nov 2026',
-    time: '09:30 AM',
-    venue: 'Main Campus',
-    club: 'Genesis',
-  },
-];
-
+const events = dummyEvents;
 function EventCard({ event }) {
   return (
     <article className="group relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-[#10172A] to-[#080D1C] p-6 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/10">
