@@ -1,7 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { dummyEvents } from '../data/events';
-
+import dummyEvents from '../data/events';
 const bannerStyles = {
   GDGC: 'from-blue-700 via-indigo-700 to-cyan-500',
   'E-Cell': 'from-purple-800 via-fuchsia-700 to-pink-500',
