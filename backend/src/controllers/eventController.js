@@ -1,9 +1,11 @@
 const Post = require('../../models/event');
+const mongoose = require('mongoose');
 
-const getPostFields = (body) => {
+const getPostFields = (req) => {
+  const body = req.body || {};
   const fields = {};
 
-  for (const field of ['title', 'description', 'imageUrl', 'eventDate', 'createdAt', 'createdBy']) {
+  for (const field of ['title', 'description', 'imageUrl', 'eventDate', 'createdAt']) {
     if (body[field] !== undefined) {
       fields[field] = body[field];
     }
@@ -13,13 +15,32 @@ const getPostFields = (body) => {
     fields.eventDate = body.date;
   }
 
+  // Determine user ObjectId for createdBy
+  const creatorId = req.user?._id || req.user?.id || body.createdBy || body.userId || body.user;
+
+  if (creatorId && mongoose.Types.ObjectId.isValid(creatorId)) {
+    fields.createdBy = creatorId;
+  }
+
   return fields;
 };
 
 // 1. CREATE EVENT
 const createEvent = async (req, res) => {
   try {
-    const newEvent = await Post.create(getPostFields(req.body));
+    const eventData = getPostFields(req);
+
+    if (!eventData.createdBy) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid User ID (createdBy or userId) is required'
+      });
+    }
+
+    const newEvent = await Post.create(eventData);
+
+    // Populate user info before returning response
+    await newEvent.populate('createdBy', 'name email');
 
     return res.status(201).json({
       success: true,
@@ -39,7 +60,9 @@ const createEvent = async (req, res) => {
 // 2. GET ALL EVENTS
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Post.find();
+    const events = await Post.find()
+      .populate('createdBy', 'name email')
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
@@ -59,7 +82,8 @@ const getAllEvents = async (req, res) => {
 // 3. GET SINGLE EVENT
 const getEventById = async (req, res) => {
   try {
-    const event = await Post.findById(req.params.id);
+    const event = await Post.findById(req.params.id)
+      .populate('createdBy', 'name email');
 
     if (!event) {
       return res.status(404).json({
@@ -84,14 +108,16 @@ const getEventById = async (req, res) => {
 // 4. UPDATE EVENT
 const updateEvent = async (req, res) => {
   try {
+    const updateData = getPostFields(req);
+
     const updatedEvent = await Post.findByIdAndUpdate(
       req.params.id,
-      getPostFields(req.body),
+      updateData,
       {
         new: true,
         runValidators: true
       }
-    );
+    ).populate('createdBy', 'name email');
 
     if (!updatedEvent) {
       return res.status(404).json({
