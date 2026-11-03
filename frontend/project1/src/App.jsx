@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
+import Profile from './pages/Profile';
 import GDGC from './pages/clubs/GDGC';
 import Ecell from './pages/clubs/Ecell';
 import SAE from './pages/clubs/SAE';
@@ -16,6 +17,8 @@ function App() {
       <Routes>
         {/* Home Route */}
         <Route path="/" element={<Home />} />
+        {/* Profile Route */}
+        <Route path="/profile" element={<Profile />} />
 
         {/* Individual Club Routes */}
         <Route path="/clubs/gdgc" element={<GDGC />} />
