@@ -1,20 +1,26 @@
-
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Home,
   Users,
   CalendarDays,
+  User,
   ArrowUpRight,
 } from 'lucide-react';
 
 import logo from '../assets/logo.png';
+feature/student-profile
+
 import { Link } from 'react-router-dom';
+main
 import ProfileDropdown from './ProfileDropdown';
 
 function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
   const navLinks = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'Clubs', href: '#clubs', icon: Users },
-    { name: 'Events', href: '#events', icon: CalendarDays },
+    { name: 'Home', href: '/', isRoute: true, icon: Home },
+    { name: 'Clubs', href: '#clubs', isRoute: false, icon: Users },
+    { name: 'Events', href: '#events', isRoute: false, icon: CalendarDays },
+    { name: 'Profile', href: '/profile', isRoute: true, icon: User },
   ];
   const isClubHead =
   isLoggedIn &&
@@ -30,7 +36,7 @@ function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
           <img
             src={logo}
             alt="CampusOS Logo"
-            className="h-24 w-auto object-contain transition duration-300 group-hover:scale-105"
+            className="h-12 w-auto object-contain transition duration-300 group-hover:scale-105"
           />
         </Link>
 
@@ -39,17 +45,61 @@ function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
           {navLinks.map((link) => {
             const Icon = link.icon;
 
-            return (
+            return link.isRoute ? (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="group flex items-center gap-2 rounded-full px-5 py-2.5 text-base font-semibold text-slate-300 transition-all duration-300 hover:bg-cyan-400/10 hover:text-cyan-400"
+              >
+                <Icon
+                  size={19}
+                  strokeWidth={2}
+                  className="transition-transform duration-300 group-hover:scale-110"
+                />
+                {link.name}
+              </Link>
+            ) : (
               <a
                 key={link.name}
                 href={link.href}
-                className="group flex items-center gap-2 rounded-full px-5 py-3 text-base font-semibold text-slate-300 transition-all duration-300 hover:bg-cyan-400/10 hover:text-cyan-400"
+                className="group flex items-center gap-2 rounded-full px-5 py-2.5 text-base font-semibold text-slate-300 transition-all duration-300 hover:bg-cyan-400/10 hover:text-cyan-400"
               >
+feature/student-profile
+                <Icon
+                  size={19}
+                  strokeWidth={2}
+                  className="transition-transform duration-300 group-hover:scale-110"
+                />
+
                 <Icon size={19} strokeWidth={2} />
+main
                 {link.name}
               </a>
             );
           })}
+        </div>
+
+feature/student-profile
+        <div className="flex items-center gap-4">
+          {isClubHead && (
+            <Link
+              to="/organize-event"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:scale-105"
+            >
+              + Organize Event
+            </Link>
+          )}
+
+          {isLoggedIn ? (
+            <ProfileDropdown email={userEmail} onLogout={onLogout} />
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 text-sm font-bold text-white transition hover:scale-105"
+            >
+              Login
+            </Link>
+          )}
         </div>
 
         {/* Login / Profile */}
@@ -79,6 +129,7 @@ function Navbar({ isLoggedIn, onLogout, userEmail, userRole }) {
     </Link>
   )}
 </div>
+main
       </div>
     </nav>
   );
