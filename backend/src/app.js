@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const clubRoutes = require('./routes/clubRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 const app  = express();
 
@@ -19,5 +20,6 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/clubs', clubRoutes);
+app.use('/api/events', eventRoutes);
 
 module.exports = app;
