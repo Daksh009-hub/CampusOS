@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom';
 
 function OrganizeEvent() {
   const [formData, setFormData] = useState({
-    name: '',
-    category: 'Workshop',
-    date: '',
-    time: '',
-    venue: '',
+    title: '',
     description: '',
-    deadline: '',
+    eventDate: '',
+    imageUrl: '',
   });
 
-  const [banner, setBanner] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const inputClass =
+    'w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3.5 text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,12 +27,9 @@ function OrganizeEvent() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log({
-      ...formData,
-      banner,
-    });
+    console.log('Event Data:', formData);
 
-    alert('Event form submitted! Backend integration is pending.');
+    setSubmitted(true);
   };
 
   return (
@@ -41,7 +38,7 @@ function OrganizeEvent() {
 
         <Link
           to="/"
-          className="text-sm text-slate-400 hover:text-cyan-400"
+          className="text-sm text-slate-400 transition hover:text-cyan-400"
         >
           ← Back to Home
         </Link>
@@ -56,165 +53,147 @@ function OrganizeEvent() {
           </h1>
 
           <p className="mt-3 text-slate-400">
-            Create and publish an exciting event for the UIET community.
+            Create an event and share it with the UIET community.
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-7 rounded-3xl border border-slate-800 bg-[#10172A] p-6 md:p-10"
-        >
+        {submitted ? (
+          <div className="rounded-3xl border border-cyan-400/30 bg-[#10172A] p-10 text-center">
+            <div className="text-5xl text-cyan-400">✓</div>
 
-          <div>
-            <h2 className="text-xl font-bold">Event Information</h2>
-            <p className="mt-1 text-sm text-slate-400">
-              Enter the basic details of your event.
+            <h2 className="mt-5 text-2xl font-bold">
+              Event Submitted!
+            </h2>
+
+            <p className="mt-3 text-slate-400">
+              Your event form has been submitted in this demo.
+              Backend integration is pending.
             </p>
-          </div>
 
-          {/* Event Name */}
-          <div>
-            <label className="mb-2 block text-sm text-slate-300">
-              Event Name *
-            </label>
-            <input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter event name"
-              className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          {/* Category */}
-          <div>
-            <label className="mb-2 block text-sm text-slate-300">
-              Event Category *
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 outline-none focus:border-cyan-400"
+            <button
+              onClick={() => {
+                setSubmitted(false);
+                setFormData({
+                  title: '',
+                  description: '',
+                  eventDate: '',
+                  imageUrl: '',
+                });
+              }}
+              className="mt-7 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold"
             >
-              <option>Workshop</option>
-              <option>Hackathon</option>
-              <option>Competition</option>
-              <option>Technical Session</option>
-              <option>Seminar</option>
-              <option>Ideathon</option>
-              <option>Other</option>
-            </select>
+              Create Another Event
+            </button>
           </div>
-
-          {/* Date and Time */}
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm text-slate-300">
-                Event Date *
-              </label>
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 text-white outline-none focus:border-cyan-400"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm text-slate-300">
-                Start Time *
-              </label>
-              <input
-                type="time"
-                name="time"
-                value={formData.time}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 text-white outline-none focus:border-cyan-400"
-              />
-            </div>
-          </div>
-
-          {/* Venue */}
-          <div>
-            <label className="mb-2 block text-sm text-slate-300">
-              Venue *
-            </label>
-            <input
-              name="venue"
-              value={formData.venue}
-              onChange={handleChange}
-              required
-              placeholder="Enter event venue"
-              className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="mb-2 block text-sm text-slate-300">
-              Event Description *
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows="5"
-              placeholder="Describe your event..."
-              className="w-full resize-none rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          {/* Registration Deadline */}
-          <div>
-            <label className="mb-2 block text-sm text-slate-300">
-              Registration Deadline
-            </label>
-            <input
-              type="date"
-              name="deadline"
-              value={formData.deadline}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3 text-white outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          {/* Banner */}
-          <div>
-            <label className="mb-2 block text-sm text-slate-300">
-              Event Banner / Poster
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setBanner(e.target.files?.[0] || null)}
-              className="w-full rounded-xl border border-slate-700 bg-[#080D1C] p-3 text-sm text-slate-400 file:mr-4 file:rounded-lg file:border-0 file:bg-cyan-500 file:px-4 file:py-2 file:font-semibold file:text-[#050816]"
-            />
-            {banner && (
-              <p className="mt-2 text-sm text-cyan-400">
-                Selected: {banner.name}
-              </p>
-            )}
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-4 font-bold text-white transition hover:scale-[1.01]"
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-7 rounded-3xl border border-slate-800 bg-[#10172A] p-6 shadow-2xl shadow-blue-950/20 sm:p-10"
           >
-            Submit Event for Approval →
-          </button>
 
-          <p className="text-center text-xs text-slate-500">
-            Events should be reviewed before appearing publicly.
-          </p>
+            {/* Event Title */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Event Title *
+              </label>
 
-        </form>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter event title"
+                required
+                className={inputClass}
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Event Description *
+              </label>
+
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="5"
+                placeholder="Describe your event..."
+                required
+                className={inputClass}
+              />
+            </div>
+
+            {/* Event Date */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Event Date & Time *
+              </label>
+
+              <input
+                type="datetime-local"
+                name="eventDate"
+                value={formData.eventDate}
+                onChange={handleChange}
+                required
+                className={inputClass}
+              />
+            </div>
+
+            {/* Image URL */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Event Banner Image URL
+              </label>
+
+              <input
+                type="url"
+                name="imageUrl"
+                value={formData.imageUrl}
+                onChange={handleChange}
+                placeholder="https://example.com/event-banner.jpg"
+                className={inputClass}
+              />
+
+              <p className="mt-2 text-xs text-slate-500">
+                Paste a publicly accessible image URL.
+              </p>
+
+              {formData.imageUrl && (
+                <div className="mt-5">
+                  <p className="mb-2 text-sm text-slate-400">
+                    Banner Preview
+                  </p>
+
+                  <img
+                    src={formData.imageUrl}
+                    alt="Event banner preview"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    onLoad={(e) => {
+                      e.currentTarget.style.display = 'block';
+                    }}
+                    className="max-h-64 w-full rounded-xl border border-slate-700 object-cover"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-4 font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-[1.01]"
+            >
+              Submit Event for Approval →
+            </button>
+
+            <p className="text-center text-xs text-slate-500">
+              Events require admin approval before public publishing.
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );
