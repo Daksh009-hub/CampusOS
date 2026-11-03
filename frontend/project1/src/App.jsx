@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
-feature/student-profile
+
 import Profile from './pages/Profile';
 
 
-main
+
 import Login from './pages/Login';
 import GDGC from './pages/clubs/GDGC';
 import Ecell from './pages/clubs/Ecell';
@@ -67,11 +67,11 @@ function App() {
           }
         />
 
-feature/student-profile
+
         <Route path="/profile" element={<Profile />} />
 
 
-main
+
         <Route
           path="/login"
           element={
