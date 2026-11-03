@@ -5,6 +5,7 @@ import {
   Rocket,
   Car,
   Cpu,
+  Dna,
   Lightbulb,
   ArrowUpRight,
 } from 'lucide-react';
@@ -15,7 +16,7 @@ const clubIcons = {
   Ecell: Rocket,
   SAE: Car,
   Elektron: Cpu,
-  Genesis: Lightbulb,
+  Genesis: Dna,
 };
 
 function ClubCard({ name, description }) {
