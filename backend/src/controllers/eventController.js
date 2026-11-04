@@ -1,18 +1,46 @@
 const Post = require('../../models/event');
+const User = require('../../models/user');
 const mongoose = require('mongoose');
 
 const getPostFields = (req) => {
   const body = req.body || {};
   const fields = {};
 
-  for (const field of ['title', 'description', 'imageUrl', 'eventDate', 'createdAt']) {
+  const allowedFields = [
+    'title',
+    'description',
+    'imageUrl',
+    'eventDate',
+    'time',
+    'venue',
+    'club',
+    'eventType',
+    'registrationLink',
+    'createdAt'
+  ];
+
+  for (const field of allowedFields) {
     if (body[field] !== undefined) {
       fields[field] = body[field];
     }
   }
 
+  // Fallback aliases
+  if (!fields.title && body.name) {
+    fields.title = body.name;
+  }
+
   if (fields.eventDate === undefined && body.date !== undefined) {
     fields.eventDate = body.date;
+  }
+
+  if (!fields.club && body.organizedBy) {
+    fields.club = body.organizedBy;
+  }
+
+  // If category is provided, map to eventType
+  if (!fields.eventType && body.category) {
+    fields.eventType = body.category;
   }
 
   // Determine user ObjectId for createdBy
@@ -57,10 +85,20 @@ const createEvent = async (req, res) => {
 };
 
 
-// 2. GET ALL EVENTS
+// 2. GET ALL EVENTS (Optional query filters by club / eventType / category)
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Post.find()
+    const filter = {};
+
+    if (req.query.club) {
+      filter.club = new RegExp(req.query.club, 'i');
+    }
+    const typeFilter = req.query.eventType || req.query.category;
+    if (typeFilter) {
+      filter.eventType = new RegExp(typeFilter, 'i');
+    }
+
+    const events = await Post.find(filter)
       .populate('createdBy', 'name email')
       .sort({ createdAt: -1 });
 
