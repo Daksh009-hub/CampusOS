@@ -16,6 +16,7 @@ import Elektron from './pages/clubs/Elektron';
 import Genesis from './pages/clubs/Genesis';
 import EventDetails from './pages/EventDetails';
 import OrganizeEvent from './pages/OrganizeEvent';
+import Clubs from './pages/Clubs';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -26,18 +27,16 @@ function App() {
     () => localStorage.getItem('campusEmail') || ''
   );
 
-  const [userRole, setUserRole] = useState(
-    () => localStorage.getItem('campusRole') || 'student'
-  );
+  
 
   // Login
   const handleLogin = (email, role = 'student') => {
     localStorage.setItem('campusUser', 'true');
     localStorage.setItem('campusEmail', email);
-    localStorage.setItem('campusRole', role);
+    
 
     setUserEmail(email);
-    setUserRole(role);
+    
     setIsLoggedIn(true);
   };
 
@@ -45,10 +44,10 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('campusUser');
     localStorage.removeItem('campusEmail');
-    localStorage.removeItem('campusRole');
+    
 
     setUserEmail('');
-    setUserRole('student');
+
     setIsLoggedIn(false);
   };
 
@@ -61,7 +60,7 @@ function App() {
             <Home
               isLoggedIn={isLoggedIn}
               userEmail={userEmail}
-              userRole={userRole}
+              
               onLogout={handleLogout}
             />
           }
@@ -90,6 +89,16 @@ function App() {
 
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/organize-event" element={<OrganizeEvent />} />
+        <Route
+           path="/clubs"
+           element={
+           <Clubs
+              isLoggedIn={isLoggedIn}
+              userEmail={userEmail}
+             onLogout={handleLogout}
+    />
+  }
+/>
       </Routes>
     </BrowserRouter>
   );

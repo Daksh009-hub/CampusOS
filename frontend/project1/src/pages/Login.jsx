@@ -6,14 +6,14 @@ function Login({ isLoggedIn, onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('student');
+  
 
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    onLogin(email, role);
+    onLogin(email, password);
     navigate('/');
   };
 
@@ -92,21 +92,7 @@ function Login({ isLoggedIn, onLogin }) {
               </div>
             </div>
 
-            {/* Select Role */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Login As
-              </label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-4 py-3.5 text-white outline-none focus:border-cyan-400"
-              >
-                <option value="student">Student</option>
-                <option value="clubHead">Club Head</option>
-              </select>
-            </div>
-
+            
             {/* Remember Me */}
             <div className="flex items-center gap-2">
               <input
