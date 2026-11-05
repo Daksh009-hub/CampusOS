@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Club = require('../../models/club');
 
-// 1. Get all clubs from MongoDB
 router.get('/', async (req, res) => {
   try {
     const clubs = await Club.find().sort({ name: 1 });
@@ -18,18 +17,15 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 2. Get single club by slug or ID (e.g. /api/clubs/gdgc or /api/clubs/:id)
 router.get('/:identifier', async (req, res) => {
   try {
     const { identifier } = req.params;
 
     let club;
-    // Check if identifier is a valid 24-character hex ObjectId
     if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
       club = await Club.findById(identifier);
     }
 
-    // Otherwise find by slug
     if (!club) {
       club = await Club.findOne({ slug: identifier.toLowerCase() });
     }
