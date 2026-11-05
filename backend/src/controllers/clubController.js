@@ -5,84 +5,7 @@ const generateSlug = (name) => {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '');
-};
-
-const createClub = async (req, res) => {
-  try {
-    const {
-      name,
-      description,
-      fullName,
-      longDescription,
-      category,
-      logoUrl,
-      bannerUrl,
-      vision,
-      mission,
-      achievements,
-      socialLinks,
-      domains
-    } = req.body || {};
-
-    if (!name || !description) {
-      return res.status(400).json({
-        success: false,
-        message: 'Club name and description are required'
-      });
-    }
-
-    const slug = generateSlug(String(name));
-
-    if (!slug) {
-      return res.status(400).json({
-        success: false,
-        message: 'Club name must contain letters or numbers'
-      });
-    }
-
-    const newClub = await Club.create({
-      name,
-      slug,
-      fullName,
-      description,
-      longDescription,
-      category: category || 'Technical',
-      logoUrl: logoUrl || '',
-      bannerUrl: bannerUrl || '',
-      vision,
-      mission,
-      achievements,
-      socialLinks,
-      domains
-    });
-
-    return res.status(201).json({
-      success: true,
-      message: 'Club created successfully',
-      data: newClub
-    });
-  } catch (error) {
-    if (error.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message: 'A club with this name or slug already exists'
-      });
-    }
-
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-
-    console.error('Error creating club:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal Server Error'
-    });
-  }
-};
+};  
 
 const getAllClubs = async (req, res) => {
   try {
@@ -134,4 +57,4 @@ const getClubByIdentifier = async (req, res) => {
   }
 };
 
-module.exports = { createClub, getAllClubs, getClubByIdentifier };
+module.exports = { getAllClubs, getClubByIdentifier };
