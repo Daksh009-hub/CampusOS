@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const clubRoutes = require('./routes/clubRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app  = express();
 
@@ -19,6 +20,7 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/clubs', clubRoutes);
 app.use('/api/events', eventRoutes);
 
