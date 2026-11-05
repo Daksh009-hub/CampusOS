@@ -114,15 +114,7 @@ function Login({ isLoggedIn, onLogin }) {
 
           </form>
 
-          <div className="mt-7 text-center text-sm text-slate-400">
-            Don't have an account?{' '}
-            <Link
-              to="/signup"
-              className="font-semibold text-cyan-400 hover:text-cyan-300"
-            >
-              Sign Up
-            </Link>
-          </div>
+          
         </div>
 
         <p className="mt-7 text-center text-xs text-slate-500">
