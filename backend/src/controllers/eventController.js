@@ -25,7 +25,6 @@ const getPostFields = (req) => {
     }
   }
 
-  // Fallback aliases
   if (!fields.title && body.name) {
     fields.title = body.name;
   }
@@ -38,12 +37,10 @@ const getPostFields = (req) => {
     fields.club = body.organizedBy;
   }
 
-  // If category is provided, map to eventType
   if (!fields.eventType && body.category) {
     fields.eventType = body.category;
   }
 
-  // Determine user ObjectId for createdBy
   const creatorId = req.user?._id || req.user?.id || body.createdBy || body.userId || body.user;
 
   if (creatorId && mongoose.Types.ObjectId.isValid(creatorId)) {
@@ -53,7 +50,11 @@ const getPostFields = (req) => {
   return fields;
 };
 
-// 1. CREATE EVENT
+const isOwner = (req, event) => {
+  const requesterId = req.body?.userId || req.query?.userId;
+  return !!requesterId && String(event.createdBy) === String(requesterId);
+};
+
 const createEvent = async (req, res) => {
   try {
     const eventData = getPostFields(req);
@@ -67,7 +68,6 @@ const createEvent = async (req, res) => {
 
     const newEvent = await Post.create(eventData);
 
-    // Populate user info before returning response
     await newEvent.populate('createdBy', 'name email');
 
     return res.status(201).json({
@@ -84,21 +84,20 @@ const createEvent = async (req, res) => {
   }
 };
 
-
-// 2. GET ALL EVENTS (Optional query filters by club / eventType / category)
 const getAllEvents = async (req, res) => {
   try {
     const filter = {};
 
     if (req.query.club) {
-      filter.club = new RegExp(req.query.club, 'i');
+      filter.club = String(req.query.club);
     }
     const typeFilter = req.query.eventType || req.query.category;
     if (typeFilter) {
-      filter.eventType = new RegExp(typeFilter, 'i');
+      filter.eventType = String(typeFilter);
     }
 
     const events = await Post.find(filter)
+      .collation({ locale: 'en', strength: 2 })
       .populate('createdBy', 'name email')
       .sort({ createdAt: -1 });
 
@@ -116,8 +115,6 @@ const getAllEvents = async (req, res) => {
   }
 };
 
-
-// 3. GET SINGLE EVENT
 const getEventById = async (req, res) => {
   try {
     const event = await Post.findById(req.params.id)
@@ -142,11 +139,26 @@ const getEventById = async (req, res) => {
   }
 };
 
-
-// 4. UPDATE EVENT
 const updateEvent = async (req, res) => {
   try {
+    const existingEvent = await Post.findById(req.params.id);
+
+    if (!existingEvent) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    if (!isOwner(req, existingEvent)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only the creator can edit this event'
+      });
+    }
+
     const updateData = getPostFields(req);
+    delete updateData.createdBy;
 
     const updatedEvent = await Post.findByIdAndUpdate(
       req.params.id,
@@ -156,13 +168,6 @@ const updateEvent = async (req, res) => {
         runValidators: true
       }
     ).populate('createdBy', 'name email');
-
-    if (!updatedEvent) {
-      return res.status(404).json({
-        success: false,
-        message: 'Event not found'
-      });
-    }
 
     return res.status(200).json({
       success: true,
@@ -178,18 +183,25 @@ const updateEvent = async (req, res) => {
   }
 };
 
-
-// 5. DELETE EVENT
 const deleteEvent = async (req, res) => {
   try {
-    const deletedEvent = await Post.findByIdAndDelete(req.params.id);
+    const event = await Post.findById(req.params.id);
 
-    if (!deletedEvent) {
+    if (!event) {
       return res.status(404).json({
         success: false,
         message: 'Event not found'
       });
     }
+
+    if (!isOwner(req, event)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only the creator can delete this event'
+      });
+    }
+
+    await event.deleteOne();
 
     return res.status(200).json({
       success: true,
