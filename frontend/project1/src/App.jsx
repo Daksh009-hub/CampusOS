@@ -3,51 +3,45 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
-
 import Profile from './pages/Profile';
-
-
-
 import Login from './pages/Login';
-import GDGC from './pages/clubs/GDGC';
-import Ecell from './pages/clubs/Ecell';
-import SAE from './pages/clubs/SAE';
-import Elektron from './pages/clubs/Elektron';
-import Genesis from './pages/clubs/Genesis';
 import EventDetails from './pages/EventDetails';
 import OrganizeEvent from './pages/OrganizeEvent';
 import Clubs from './pages/Clubs';
+import ClubDetails from './pages/ClubDetails';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => localStorage.getItem('campusUser') === 'true'
+  const [userId, setUserId] = useState(
+    () => localStorage.getItem('campusUserId') || ''
   );
 
   const [userEmail, setUserEmail] = useState(
     () => localStorage.getItem('campusEmail') || ''
   );
 
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => localStorage.getItem('campusUser') === 'true'
+  );
 
-  // Login
-  const handleLogin = (email, role = 'student') => {
+  // Save authenticated user details
+  const handleLogin = (user) => {
     localStorage.setItem('campusUser', 'true');
-    localStorage.setItem('campusEmail', email);
-    
+    localStorage.setItem('campusUserId', user._id);
+    localStorage.setItem('campusEmail', user.email);
 
-    setUserEmail(email);
-    
+    setUserId(user._id);
+    setUserEmail(user.email);
     setIsLoggedIn(true);
   };
 
   // Logout
   const handleLogout = () => {
     localStorage.removeItem('campusUser');
+    localStorage.removeItem('campusUserId');
     localStorage.removeItem('campusEmail');
-    
 
+    setUserId('');
     setUserEmail('');
-
     setIsLoggedIn(false);
   };
 
@@ -60,16 +54,15 @@ function App() {
             <Home
               isLoggedIn={isLoggedIn}
               userEmail={userEmail}
-              
               onLogout={handleLogout}
             />
           }
         />
 
-
-        <Route path="/profile" element={<Profile />} />
-
-
+        <Route
+          path="/profile"
+          element={<Profile userId={userId} />}
+        />
 
         <Route
           path="/login"
@@ -81,23 +74,22 @@ function App() {
           }
         />
 
-        <Route path="/clubs/gdgc" element={<GDGC />} />
-        <Route path="/clubs/ecell" element={<Ecell />} />
-        <Route path="/clubs/sae" element={<SAE />} />
-        <Route path="/clubs/elektron" element={<Elektron />} />
-        <Route path="/clubs/genesis" element={<Genesis />} />
-
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/organize-event" element={<OrganizeEvent />} />
         <Route
-           path="/clubs"
-           element={
-           <Clubs
+          path="/clubs"
+          element={
+            <Clubs
               isLoggedIn={isLoggedIn}
               userEmail={userEmail}
-             onLogout={handleLogout}
-    />
-  }
+              onLogout={handleLogout}
+            />
+          }
+        />
+
+        <Route path="/clubs/:slug" element={<ClubDetails />} />
+        <Route path="/events/:id" element={<EventDetails />} />
+        <Route
+  path="/organize-event"
+  element={<OrganizeEvent userId={userId} />}
 />
       </Routes>
     </BrowserRouter>

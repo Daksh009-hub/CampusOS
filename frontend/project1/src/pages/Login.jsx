@@ -2,19 +2,53 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function Login({ isLoggedIn, onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    onLogin(email, password);
-    navigate('/');
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Login failed');
+      }
+
+      if (!result.data?._id) {
+        throw new Error('User ID was not received from the server.');
+      }
+
+      onLogin(result.data);
+      navigate('/');
+    } catch (err) {
+      setError(
+        err.message || 'Unable to connect to the server. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,9 +75,20 @@ function Login({ isLoggedIn, onLogin }) {
             </p>
           </div>
 
+          {isLoggedIn && (
+            <p className="mb-4 text-center text-sm text-cyan-400">
+              You are already logged in.
+            </p>
+          )}
+
+          {error && (
+            <div className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-5">
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Email Address
@@ -58,18 +103,11 @@ function Login({ isLoggedIn, onLogin }) {
               />
             </div>
 
-            {/* Password */}
             <div>
               <div className="flex justify-between mb-2">
                 <label className="text-sm font-medium text-slate-300">
                   Password
                 </label>
-                <button
-                  type="button"
-                  className="text-xs text-cyan-400 hover:text-cyan-300"
-                >
-                  Forgot Password?
-                </button>
               </div>
 
               <div className="relative">
@@ -92,8 +130,6 @@ function Login({ isLoggedIn, onLogin }) {
               </div>
             </div>
 
-            
-            {/* Remember Me */}
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -107,14 +143,13 @@ function Login({ isLoggedIn, onLogin }) {
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3.5 font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/20"
+              disabled={loading}
+              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3.5 font-semibold text-white transition hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login to CampusOS →
+              {loading ? 'Logging in...' : 'Login to CampusOS →'}
             </button>
 
           </form>
-
-          
         </div>
 
         <p className="mt-7 text-center text-xs text-slate-500">

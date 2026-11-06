@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   User,
@@ -9,76 +10,161 @@ import {
   Check,
   X,
   ArrowLeft,
-  Camera,
   ShieldCheck,
   Award,
   Sparkles,
   Hash,
-  FileText
+  FileText,
+  Loader2,
 } from 'lucide-react';
 
-function Profile() {
- 
-  const [profile, setProfile] = useState({
-    name: 'Aarav Sharma',
-    email: 'aarav.sharma@uiet.ac.in',
-    role: 'Student Member',
-    department: 'Computer Science & Engineering',
-    year: '3rd Year (B.Tech)',
-    rollNumber: '252302042',
-    bio: 'Passionate web developer and open-source enthusiast interested in full-stack web applications, competitive programming, and active participation in campus hackathons.',
-    avatarUrl: '', // Fallback initials avatar "AS"
-    joinedClubs: [
-      { name: 'GDGC UIET', role: 'Technical Lead', color: 'text-cyan-400 border-cyan-500/30' },
-      { name: 'E-Cell UIET', role: 'Member', color: 'text-blue-400 border-blue-500/30' },
-      { name: 'Elektron Club', role: 'Core Member', color: 'text-purple-400 border-purple-500/30' }
-    ]
-  });
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+function Profile({ userId }) {
+  const [profile, setProfile] = useState(null);
+  const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ ...profile });
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!userId) {
+        setError('Please login to view your profile.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/users/${userId}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || 'Unable to fetch profile.');
+        }
+
+        setProfile(result.data);
+        setFormData({
+          name: result.data.name || '',
+          rollNumber: result.data.rollNumber || '',
+          department: result.data.department || '',
+          year: result.data.year || '',
+          bio: result.data.bio || '',
+        });
+      } catch (err) {
+        setError(err.message || 'Something went wrong.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [userId]);
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setError('');
+    setSuccessMessage('');
 
-    // Simulate backend API response update
-    setTimeout(() => {
-      setProfile({ ...formData });
-      setSaving(false);
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Unable to update profile.');
+      }
+
+      const updatedProfile = result.data || {
+        ...profile,
+        ...formData,
+      };
+
+      setProfile(updatedProfile);
+      setFormData({
+        name: updatedProfile.name || '',
+        rollNumber: updatedProfile.rollNumber || '',
+        department: updatedProfile.department || '',
+        year: updatedProfile.year || '',
+        bio: updatedProfile.bio || '',
+      });
+
       setIsEditing(false);
-      setSuccessMessage('Profile details updated successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
-    }, 600);
+      setSuccessMessage('Profile updated successfully!');
+    } catch (err) {
+      setError(err.message || 'Unable to save changes.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCancel = () => {
-    setFormData({ ...profile });
+    setFormData({
+      name: profile.name || '',
+      rollNumber: profile.rollNumber || '',
+      department: profile.department || '',
+      year: profile.year || '',
+      bio: profile.bio || '',
+    });
+
     setIsEditing(false);
+    setError('');
   };
 
   const getInitials = (name) => {
     return name
-      ? name
-          .split(' ')
-          .map((n) => n[0])
-          .join('')
-          .toUpperCase()
+      ? name.split(' ').map((part) => part[0]).join('').toUpperCase()
       : 'ST';
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050816] flex items-center justify-center text-cyan-400">
+        <Loader2 className="animate-spin" size={35} />
+      </div>
+    );
+  }
+
+  if (error && !profile) {
+    return (
+      <div className="min-h-screen bg-[#050816] flex flex-col items-center justify-center px-5 text-center text-white">
+        <p className="text-red-400 mb-5">{error}</p>
+        <Link to="/login" className="text-cyan-400 hover:text-white">
+          Go to Login →
+        </Link>
+      </div>
+    );
+  }
+
+  const joinedClubs = Array.isArray(profile.joinedClubs)
+    ? profile.joinedClubs
+    : [];
+
+  const eventsAttended = Array.isArray(profile.eventsAttended)
+    ? profile.eventsAttended.length
+    : Number(profile.eventsAttended) || 0;
 
   return (
     <div className="min-h-screen bg-[#050816] text-white">
       <main className="mx-auto max-w-5xl px-6 py-12 space-y-8">
-        
-        {/* Navigation & Actions Header */}
-        <div className="flex items-center justify-between">
+
+        <div className="flex items-center justify-between gap-3">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm text-cyan-400 hover:text-white transition"
@@ -99,243 +185,253 @@ function Profile() {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 transition"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-sm text-slate-300 hover:bg-slate-700"
               >
                 <X size={16} /> Cancel
               </button>
+
               <button
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-1.5 text-sm font-semibold text-white shadow-lg hover:from-blue-500 hover:to-cyan-400 transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2 text-sm font-semibold disabled:opacity-50"
               >
                 {saving ? (
-                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <Loader2 size={16} className="animate-spin" />
                 ) : (
-                  <>
-                    <Check size={16} /> Save Changes
-                  </>
+                  <Check size={16} />
                 )}
+                {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           )}
         </div>
 
-        {/* Success Alert */}
+        {error && (
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
+            {error}
+          </div>
+        )}
+
         {successMessage && (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-sm font-medium text-emerald-400">
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-sm text-emerald-400">
             {successMessage}
           </div>
         )}
 
-        {/* Profile Card Header */}
+        {/* Profile Header */}
         <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-[#10172A] p-6 sm:p-8 shadow-2xl">
           <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
 
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-            {/* Avatar Box */}
-            <div className="relative group shrink-0">
-              <div className="flex h-28 w-28 items-center justify-center rounded-2xl border-2 border-cyan-400/40 bg-gradient-to-br from-blue-600 to-cyan-500 text-3xl font-extrabold text-white shadow-xl overflow-hidden">
-                {profile.avatarUrl ? (
-                  <img
-                    src={profile.avatarUrl}
-                    alt={profile.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span>{getInitials(profile.name)}</span>
-                )}
-              </div>
-              {isEditing && (
-                <button
-                  type="button"
-                  onClick={() => alert('Photo upload placeholder')}
-                  className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/60 text-white opacity-0 group-hover:opacity-100 transition"
-                >
-                  <Camera size={22} />
-                </button>
-              )}
+            <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 border-cyan-400/40 bg-gradient-to-br from-blue-600 to-cyan-500 text-3xl font-extrabold shadow-xl">
+              {getInitials(profile.name)}
             </div>
 
-            {/* Student Info */}
             <div className="flex-1 text-center sm:text-left space-y-2">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                <h1 className="text-2xl font-extrabold text-white sm:text-3xl">
-                  {profile.name}
+                <h1 className="text-2xl font-extrabold sm:text-3xl">
+                  {profile.name || 'Student'}
                 </h1>
+
                 <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-400">
-                  <ShieldCheck size={14} /> {profile.role}
+                  <ShieldCheck size={14} />
+                  {profile.role || 'Student Member'}
                 </span>
               </div>
 
-              <p className="text-sm text-slate-400 flex items-center justify-center sm:justify-start gap-2">
-                <Mail size={16} className="text-cyan-400 shrink-0" />
+              <p className="flex items-center justify-center gap-2 text-sm text-slate-400 sm:justify-start">
+                <Mail size={16} className="text-cyan-400" />
                 {profile.email}
               </p>
 
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2 text-xs text-slate-300">
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs text-slate-300 sm:justify-start">
                 <span className="flex items-center gap-1.5">
                   <Building2 size={15} className="text-cyan-400" />
-                  {profile.department}
+                  {profile.department || 'Department not added'}
                 </span>
+
                 <span className="flex items-center gap-1.5">
                   <GraduationCap size={15} className="text-cyan-400" />
-                  {profile.year}
+                  {profile.year || 'Year not added'}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Profile Details Grid */}
+        {/* Academic Information */}
         <div className="grid gap-8 md:grid-cols-3">
-          
-          {/* Main Academic Section */}
-          <div className="md:col-span-2 space-y-6">
+
+          <div className="md:col-span-2">
             <div className="rounded-2xl border border-slate-800 bg-[#10172A] p-6 space-y-6">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <User className="text-cyan-400" size={20} /> Academic Information
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <User className="text-cyan-400" size={20} />
+                Academic Information
               </h2>
 
-              {!isEditing ? (
-                <div className="space-y-4 text-sm">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-4">
-                      <span className="text-xs text-slate-400 flex items-center gap-1 mb-1">
-                        <User size={12} /> Student Name
-                      </span>
-                      <p className="font-semibold text-white">{profile.name}</p>
-                    </div>
-                    <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-4">
-                      <span className="text-xs text-slate-400 flex items-center gap-1 mb-1">
-                        <Hash size={12} /> Roll / Reg No.
-                      </span>
-                      <p className="font-semibold text-white">{profile.rollNumber}</p>
-                    </div>
-                    <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-4">
-                      <span className="text-xs text-slate-400 flex items-center gap-1 mb-1">
-                        <Building2 size={12} /> Department
-                      </span>
-                      <p className="font-semibold text-white">{profile.department}</p>
-                    </div>
-                    <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-4">
-                      <span className="text-xs text-slate-400 flex items-center gap-1 mb-1">
-                        <GraduationCap size={12} /> Academic Year
-                      </span>
-                      <p className="font-semibold text-white">{profile.year}</p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-4">
-                    <span className="text-xs text-slate-400 flex items-center gap-1 mb-1">
-                      <FileText size={12} /> Bio & Overview
-                    </span>
-                    <p className="text-slate-300 leading-relaxed">{profile.bio}</p>
-                  </div>
-                </div>
-              ) : (
+              {isEditing ? (
                 <form onSubmit={handleSave} className="space-y-4 text-sm">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-slate-300">Student Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white focus:border-cyan-400 focus:outline-none"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-slate-300">Roll Number</label>
-                      <input
-                        type="text"
-                        name="rollNumber"
-                        value={formData.rollNumber}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white focus:border-cyan-400 focus:outline-none"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-slate-300">Department</label>
-                      <input
-                        type="text"
-                        name="department"
-                        value={formData.department}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white focus:border-cyan-400 focus:outline-none"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-medium text-slate-300">Year / Program</label>
-                      <input
-                        type="text"
-                        name="year"
-                        value={formData.year}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white focus:border-cyan-400 focus:outline-none"
-                        required
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {[
+                      { name: 'name', label: 'Student Name' },
+                      { name: 'rollNumber', label: 'Roll Number' },
+                      { name: 'department', label: 'Department' },
+                      { name: 'year', label: 'Year / Program' },
+                    ].map((field) => (
+                      <div key={field.name} className="space-y-1.5">
+                        <label className="text-xs font-medium text-slate-300">
+                          {field.label}
+                        </label>
+                        <input
+                          type="text"
+                          name={field.name}
+                          value={formData[field.name] || ''}
+                          onChange={handleChange}
+                          required={field.name !== 'rollNumber'}
+                          className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white outline-none focus:border-cyan-400"
+                        />
+                      </div>
+                    ))}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-slate-300">Bio</label>
+                    <label className="text-xs font-medium text-slate-300">
+                      Bio
+                    </label>
                     <textarea
                       name="bio"
-                      rows="3"
-                      value={formData.bio}
+                      rows="4"
+                      value={formData.bio || ''}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white focus:border-cyan-400 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-700 bg-[#080D1C] px-3.5 py-2 text-white outline-none focus:border-cyan-400"
                     />
                   </div>
                 </form>
+              ) : (
+                <div className="space-y-4 text-sm">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {[
+                      {
+                        label: 'Student Name',
+                        value: profile.name,
+                        icon: User,
+                      },
+                      {
+                        label: 'Roll / Reg No.',
+                        value: profile.rollNumber,
+                        icon: Hash,
+                      },
+                      {
+                        label: 'Department',
+                        value: profile.department,
+                        icon: Building2,
+                      },
+                      {
+                        label: 'Academic Year',
+                        value: profile.year,
+                        icon: GraduationCap,
+                      },
+                    ].map((item) => {
+                      const Icon = item.icon;
+
+                      return (
+                        <div
+                          key={item.label}
+                          className="rounded-xl border border-slate-800 bg-[#080D1C] p-4"
+                        >
+                          <span className="mb-1 flex items-center gap-1 text-xs text-slate-400">
+                            <Icon size={12} />
+                            {item.label}
+                          </span>
+                          <p className="font-semibold text-white">
+                            {item.value || 'Not added'}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-4">
+                    <span className="mb-1 flex items-center gap-1 text-xs text-slate-400">
+                      <FileText size={12} />
+                      Bio & Overview
+                    </span>
+                    <p className="leading-relaxed text-slate-300">
+                      {profile.bio || 'No bio added yet.'}
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Affiliations Sidebar */}
+          {/* Joined Clubs */}
           <div className="space-y-6">
             <div className="rounded-2xl border border-slate-800 bg-[#10172A] p-6 space-y-4">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Award className="text-cyan-400" size={20} /> Joined Clubs
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <Award className="text-cyan-400" size={20} />
+                Joined Clubs
               </h2>
-              <div className="space-y-3">
-                {profile.joinedClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between rounded-xl border border-slate-800 bg-[#080D1C] p-3 text-xs"
-                  >
-                    <span className="font-semibold text-white">{club.name}</span>
-                    <span className={`px-2.5 py-1 rounded-md border ${club.color} font-medium`}>
-                      {club.role}
-                    </span>
-                  </div>
-                ))}
-              </div>
+
+              {joinedClubs.length > 0 ? (
+                <div className="space-y-3">
+                  {joinedClubs.map((club, index) => (
+                    <div
+                      key={club._id || club.name || club || index}
+                      className="rounded-xl border border-slate-800 bg-[#080D1C] p-3 text-xs"
+                    >
+                      <span className="font-semibold text-white">
+                        {typeof club === 'string'
+                          ? club
+                          : club.name || 'Club'}
+                      </span>
+
+                      {club.role && (
+                        <span className="mt-2 block text-cyan-400">
+                          {club.role}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400">
+                  You haven't joined any clubs yet.
+                </p>
+              )}
             </div>
 
+            {/* Campus Activity */}
             <div className="rounded-2xl border border-slate-800 bg-[#10172A] p-6 space-y-4">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Sparkles className="text-cyan-400" size={20} /> Campus Activity
+              <h2 className="flex items-center gap-2 text-lg font-bold">
+                <Sparkles className="text-cyan-400" size={20} />
+                Campus Activity
               </h2>
+
               <div className="grid grid-cols-2 gap-3 text-center">
                 <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-3">
-                  <span className="text-2xl font-extrabold text-cyan-400">5</span>
-                  <span className="block text-[11px] text-slate-400 mt-1">Events Attended</span>
+                  <span className="text-2xl font-extrabold text-cyan-400">
+                    {eventsAttended}
+                  </span>
+                  <span className="mt-1 block text-[11px] text-slate-400">
+                    Events Attended
+                  </span>
                 </div>
+
                 <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-3">
-                  <span className="text-2xl font-extrabold text-cyan-400">3</span>
-                  <span className="block text-[11px] text-slate-400 mt-1">Clubs Joined</span>
+                  <span className="text-2xl font-extrabold text-cyan-400">
+                    {joinedClubs.length}
+                  </span>
+                  <span className="mt-1 block text-[11px] text-slate-400">
+                    Clubs Joined
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
         </div>
-
       </main>
     </div>
   );

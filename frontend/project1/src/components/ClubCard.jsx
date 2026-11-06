@@ -1,5 +1,4 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+
 import {
   Code2,
   Rocket,
@@ -10,6 +9,8 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 
+import { Link } from 'react-router-dom';
+
 const clubIcons = {
   GDGC: Code2,
   'E-Cell': Rocket,
@@ -19,52 +20,62 @@ const clubIcons = {
   Genesis: Dna,
 };
 
-function ClubCard({ name, description }) {
+function ClubCard({ name, description, slug, bannerUrl, category }) {
   const Icon = clubIcons[name] || Lightbulb;
 
-  // Convert name to lowercase slug (e.g., "E-Cell" -> "ecell", "GDGC" -> "gdgc")
-  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  // Use the actual slug received from the backend
   const targetRoute = `/clubs/${slug}`;
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-[#10172A] to-[#080D1C] p-7 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-500/60 hover:shadow-xl hover:shadow-cyan-500/10">
+    <Link
+      to={targetRoute}
+      className="group block"
+    >
+      <div className="h-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-all duration-300 hover:-translate-y-2 hover:border-purple-400/50 hover:bg-white/10">
 
-      {/* Background Glow */}
-      <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-blue-500/10 blur-3xl transition duration-500 group-hover:bg-cyan-400/20" />
+        {/* Club Banner */}
+        <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-900/40 to-blue-900/40">
+          {bannerUrl ? (
+            <img
+              src={bannerUrl}
+              alt={name}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <Icon size={55} className="text-purple-300" />
+            </div>
+          )}
 
-      {/* Club Icon */}
-      <div className="relative mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-cyan-400/20 bg-gradient-to-br from-blue-600/20 to-cyan-400/10 text-cyan-400 transition duration-300 group-hover:scale-110 group-hover:border-cyan-400/50">
-        <Icon size={28} strokeWidth={1.8} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        </div>
+
+        {/* Club Information */}
+        <div className="p-5">
+          {category && (
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-purple-300">
+              {category}
+            </p>
+          )}
+
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-xl font-bold text-white">
+              {name}
+            </h3>
+
+            <ArrowUpRight
+              size={20}
+              className="text-gray-400 transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-purple-300"
+            />
+          </div>
+
+          <p className="line-clamp-3 text-sm leading-relaxed text-gray-400">
+            {description || 'Explore this club and discover its activities.'}
+          </p>
+        </div>
       </div>
-
-      {/* Club Name */}
-      <h3 className="relative text-xl font-bold text-white transition duration-300 group-hover:text-cyan-400">
-        {name}
-      </h3>
-
-      {/* Description */}
-      <p className="relative mt-3 min-h-12 text-sm leading-6 text-slate-400">
-        {description}
-      </p>
-
-      {/* View Details Link */}
-      <Link
-        to={targetRoute}
-        className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 transition duration-300 hover:text-white"
-      >
-        View Details
-        <ArrowUpRight
-          size={17}
-          className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-        />
-      </Link>
-
-      {/* Bottom Gradient Line */}
-      <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-500 group-hover:w-full" />
-
-    </article>
+    </Link>
   );
 }
 
 export default ClubCard;
-

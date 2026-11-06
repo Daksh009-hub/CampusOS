@@ -1,31 +1,77 @@
 
+import { useState, useEffect } from 'react';
 import ClubCard from './ClubCard';
 import { Sparkles } from 'lucide-react';
 
-const clubs = [
-  {
-    name: 'GDGC',
-    description: 'Technology, coding and developer events.',
-  },
-  {
-    name: 'E-Cell',
-    description: 'Entrepreneurship, startups and innovation.',
-  },
-  {
-    name: 'SAE',
-    description: 'Automotive engineering and practical projects.',
-  },
-  {
-    name: 'Elektron',
-    description: 'Electronics, technology and student activities.',
-  },
-  {
-    name: 'Genesis',
-    description: 'Student community and creative activities.',
-  },
-];
-
 function ClubsSection() {
+  // Store clubs fetched from backend
+  const [clubs, setClubs] = useState([]);
+
+  // Loading state
+  const [loading, setLoading] = useState(true);
+
+  // Error state
+  const [error, setError] = useState('');
+
+  // Fetch clubs from MongoDB through backend API
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        setLoading(true);
+        setError('');
+
+        const apiUrl = import.meta.env.VITE_API_URL;
+
+        if (!apiUrl) {
+          throw new Error(
+            'API URL not configured. Check frontend .env file.'
+          );
+        }
+
+        const response = await fetch(`${apiUrl}/clubs`);
+
+        // Read response only once
+        const responseText = await response.text();
+
+        console.log('API Status:', response.status);
+        console.log('API Response:', responseText);
+
+        // Check HTTP status
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+
+        // Convert response text into JSON
+        let result;
+
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(
+            'Backend returned an invalid JSON response. Check API URL.'
+          );
+        }
+
+        // Store clubs in state
+        if (result.success && Array.isArray(result.data)) {
+          setClubs(result.data);
+        } else {
+          throw new Error(
+            result.message || 'Unable to load clubs.'
+          );
+        }
+
+      } catch (err) {
+        console.error('Clubs API Error:', err);
+        setError(err.message || 'Something went wrong.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClubs();
+  }, []);
+
   return (
     <section
       id="clubs"
@@ -34,6 +80,7 @@ function ClubsSection() {
 
       {/* Background Glow */}
       <div className="pointer-events-none absolute -left-40 top-20 h-72 w-72 rounded-full bg-blue-600/10 blur-[120px]" />
+
       <div className="pointer-events-none absolute -right-40 bottom-10 h-72 w-72 rounded-full bg-purple-600/10 blur-[120px]" />
 
       <div className="relative z-10">
@@ -63,18 +110,57 @@ function ClubsSection() {
 
         </div>
 
-        {/* Club Cards */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Loading State */}
+        {loading && (
+          <p className="py-10 text-center text-cyan-400">
+            Loading clubs...
+          </p>
+        )}
 
-          {clubs.map((club) => (
-            <ClubCard
-              key={club.name}
-              name={club.name}
-              description={club.description}
-            />
-          ))}
+        {/* Error State */}
+        {!loading && error && (
+          <div className="py-10 text-center">
 
-        </div>
+            <p className="text-red-400">
+              {error}
+            </p>
+
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-lg bg-cyan-500 px-5 py-2 font-semibold text-slate-950 transition hover:bg-cyan-400"
+            >
+              Try Again
+            </button>
+
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && clubs.length === 0 && (
+          <p className="py-10 text-center text-slate-400">
+            No clubs available right now.
+          </p>
+        )}
+
+        {/* Real Clubs from MongoDB */}
+        {!loading && !error && clubs.length > 0 && (
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+            {clubs.map((club) => (
+              <ClubCard
+                key={club._id}
+                name={club.name || club.slug}
+                description={club.description}
+                slug={club.slug}
+                bannerUrl={club.bannerUrl}
+                category={club.category}
+              />
+            ))}
+
+          </div>
+
+        )}
 
       </div>
     </section>
