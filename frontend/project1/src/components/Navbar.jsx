@@ -50,13 +50,16 @@ function Navbar({ isLoggedIn, onLogout, userEmail }) {
         {/* Organize Event + Login / Profile */}
         <div className="flex items-center gap-3">
 
-          <Link
-            to="/organize-event"
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-105"
-          >
-            Organize Event
-            <ArrowUpRight size={17} />
-          </Link>
+          {isLoggedIn && (
+  <Link
+    to="/organize-event"
+    className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-105"
+  >
+    Organize Event
+    <ArrowUpRight size={17} />
+  </Link>
+)}
+
 
           {isLoggedIn ? (
             <ProfileDropdown
