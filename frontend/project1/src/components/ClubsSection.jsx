@@ -20,13 +20,7 @@ function ClubsSection() {
         setLoading(true);
         setError('');
 
-        const apiUrl = import.meta.env.VITE_API_URL;
-
-        if (!apiUrl) {
-          throw new Error(
-            'API URL not configured. Check frontend .env file.'
-          );
-        }
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
         const response = await fetch(`${apiUrl}/clubs`);
 

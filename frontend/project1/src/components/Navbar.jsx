@@ -1,4 +1,3 @@
-
 import {
   Home,
   Users,
@@ -6,7 +5,6 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 
-import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
 import ProfileDropdown from './ProfileDropdown';
 
@@ -18,15 +16,14 @@ function Navbar({ isLoggedIn, onLogout, userEmail }) {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#050816]/90 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
         {/* Logo */}
-        <Link to="/" className="flex shrink-0 items-center">
-          <img
-            src={logo}
-            alt="CampusOS Logo"
-            className="h-24 w-auto object-contain"
-          />
+        <Link
+          to="/"
+          className="text-2xl md:text-3xl font-extrabold tracking-tight text-white transition hover:opacity-90"
+        >
+          Campus<span className="text-cyan-400">OS</span>
         </Link>
 
         {/* Navigation */}
@@ -51,15 +48,14 @@ function Navbar({ isLoggedIn, onLogout, userEmail }) {
         <div className="flex items-center gap-3">
 
           {isLoggedIn && (
-  <Link
-    to="/organize-event"
-    className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-105"
-  >
-    Organize Event
-    <ArrowUpRight size={17} />
-  </Link>
-)}
-
+            <Link
+              to="/organize-event"
+              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-105"
+            >
+              Organize Event
+              <ArrowUpRight size={17} />
+            </Link>
+          )}
 
           {isLoggedIn ? (
             <ProfileDropdown

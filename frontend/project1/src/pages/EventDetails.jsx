@@ -11,7 +11,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const bannerStyles = {
   GDGC: 'from-blue-700 via-indigo-700 to-cyan-500',
@@ -261,23 +261,7 @@ function EventDetails() {
 
             
 
-            {/* Highlight Tags */}
-            <div className="mt-8 flex flex-wrap gap-3">
-
-              <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-400">
-                Learn
-              </span>
-
-              <span className="rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-sm text-blue-400">
-                Participate
-              </span>
-
-              <span className="rounded-full border border-purple-400/20 bg-purple-400/10 px-4 py-2 text-sm text-purple-400">
-                Connect
-              </span>
-
-            </div>
-
+            
           </div>
 
         </section>
