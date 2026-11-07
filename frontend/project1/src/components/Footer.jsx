@@ -1,18 +1,4 @@
-
 function Footer() {
-  const quickLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'Clubs', href: '#clubs' },
-    { name: 'Events', href: '#events' },
-  ];
-
-  const socialLinks = [
-    { name: 'GitHub', href: 'https://github.com/' },
-    { name: 'Instagram', href: 'https://www.instagram.com/' },
-    { name: 'LinkedIn', href: 'https://www.linkedin.com/' },
-    { name: 'Email', href: 'mailto:contact@campusos.com' },
-  ];
-
   return (
     <footer className="relative mt-20 overflow-hidden border-t border-slate-800 bg-[#080D1C]">
 
@@ -22,7 +8,7 @@ function Footer() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
 
-        <div className="grid grid-cols-1 gap-12 py-14 md:grid-cols-3">
+        <div className="py-14">
 
           {/* Brand */}
           <div>
@@ -42,51 +28,6 @@ function Footer() {
             <span className="mt-6 inline-block rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-2 text-xs font-semibold text-cyan-400">
               Built for the UIET Community
             </span>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-bold text-white">
-              Quick Links
-            </h3>
-
-            <ul className="mt-5 space-y-4">
-              {quickLinks.map((link) => (
-                <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-sm text-slate-400 transition hover:translate-x-1 hover:text-cyan-400"
-                  >
-                    → {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Connect */}
-          <div>
-            <h3 className="text-lg font-bold text-white">
-              Connect With Us
-            </h3>
-
-            <p className="mt-5 text-sm leading-6 text-slate-400">
-              Stay connected with the CampusOS community.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-lg border border-slate-700 bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-slate-300 transition duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:bg-cyan-400/10 hover:text-cyan-400"
-                >
-                  {social.name}
-                </a>
-              ))}
-            </div>
           </div>
 
         </div>

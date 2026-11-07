@@ -41,6 +41,10 @@ const getPostFields = (req) => {
     fields.eventType = body.category;
   }
 
+  if (req.file) {
+    fields.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+  }
+
   const creatorId = req.user?._id || req.user?.id || body.createdBy || body.userId || body.user;
 
   if (creatorId && mongoose.Types.ObjectId.isValid(creatorId)) {
@@ -51,8 +55,10 @@ const getPostFields = (req) => {
 };
 
 const isOwner = (req, event) => {
-  const requesterId = req.body?.userId || req.query?.userId;
-  return !!requesterId && String(event.createdBy) === String(requesterId);
+  const requesterId =
+    req.body?.userId || req.query?.userId || req.headers?.['x-user-id'];
+  const eventCreatorId = event.createdBy?._id || event.createdBy;
+  return !!requesterId && String(eventCreatorId) === String(requesterId);
 };
 
 const createEvent = async (req, res) => {
@@ -94,6 +100,9 @@ const getAllEvents = async (req, res) => {
     const typeFilter = req.query.eventType || req.query.category;
     if (typeFilter) {
       filter.eventType = String(typeFilter);
+    }
+    if (req.query.createdBy || req.query.userId) {
+      filter.createdBy = req.query.createdBy || req.query.userId;
     }
 
     const events = await Post.find(filter)

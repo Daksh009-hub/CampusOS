@@ -156,9 +156,12 @@ function Profile({ userId }) {
     ? profile.joinedClubs
     : [];
 
-  const eventsAttended = Array.isArray(profile.eventsAttended)
-    ? profile.eventsAttended.length
-    : Number(profile.eventsAttended) || 0;
+  const eventsUploaded =
+    profile.eventsCreatedCount !== undefined
+      ? profile.eventsCreatedCount
+      : (Array.isArray(profile.eventsAttended)
+          ? profile.eventsAttended.length
+          : Number(profile.eventsAttended) || 0);
 
   return (
     <div className="min-h-screen bg-[#050816] text-white">
@@ -412,10 +415,10 @@ function Profile({ userId }) {
               <div className="grid grid-cols-2 gap-3 text-center">
                 <div className="rounded-xl border border-slate-800 bg-[#080D1C] p-3">
                   <span className="text-2xl font-extrabold text-cyan-400">
-                    {eventsAttended}
+                    {eventsUploaded}
                   </span>
                   <span className="mt-1 block text-[11px] text-slate-400">
-                    Events Attended
+                    Events Uploaded
                   </span>
                 </div>
 

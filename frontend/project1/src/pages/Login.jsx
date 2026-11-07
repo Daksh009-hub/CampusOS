@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -55,18 +56,24 @@ function Login({ isLoggedIn, onLogin }) {
     <div className="min-h-screen bg-[#050816] text-white flex items-center justify-center px-5 py-12">
       <div className="w-full max-w-md">
 
-        <Link to="/" className="flex justify-center items-center gap-3 mb-8">
-          <img
-            src="/logo.png"
-            alt="CampusOS Logo"
-            className="w-12 h-12 object-contain"
-          />
-          <span className="text-2xl font-bold">
+        <Link to="/" className="flex justify-center items-center mb-8">
+          <span className="text-3xl font-extrabold tracking-tight text-white transition hover:opacity-90">
             Campus<span className="text-cyan-400">OS</span>
           </span>
         </Link>
 
         <div className="rounded-3xl border border-slate-800 bg-[#10172A] p-7 sm:p-9 shadow-2xl shadow-blue-950/20">
+
+          <Link
+            to="/"
+            className="group mb-5 inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition hover:text-cyan-400"
+          >
+            <ArrowLeft
+              size={16}
+              className="transition group-hover:-translate-x-1"
+            />
+            Back to Home
+          </Link>
 
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold">Welcome Back!</h1>
@@ -130,16 +137,6 @@ function Login({ isLoggedIn, onLogin }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="accent-cyan-400"
-              />
-              <label htmlFor="remember" className="text-sm text-slate-400">
-                Remember me
-              </label>
-            </div>
 
             <button
               type="submit"

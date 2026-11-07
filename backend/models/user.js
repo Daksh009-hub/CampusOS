@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
+  role: {
+    type: String,
+    enum: ['student', 'lead', 'admin'],
+    default: 'student',
+    trim: true
+  },
   // Optional joined clubs list (name & role only)
   joinedClubs: {
     type: [

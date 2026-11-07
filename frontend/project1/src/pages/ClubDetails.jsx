@@ -7,16 +7,11 @@ import {
   ArrowUpRight,
   Sparkles,
   Globe,
-  Trophy,
-  Code2,
   Loader2,
-  Target,
-  Lightbulb,
   CalendarDays,
   MapPin,
   Clock,
   ExternalLink,
-  Users,
   CalendarCheck,
 } from 'lucide-react';
 
@@ -320,11 +315,11 @@ function ClubDetails() {
           />
         )}
 
-        <div className="relative mx-auto max-w-7xl px-5 py-12 md:px-10 md:py-20">
+        <div className="relative mx-auto max-w-7xl px-5 pt-6 pb-12 md:px-10 md:pt-8 md:pb-16">
 
           <Link
-            to="/"
-            className="mb-12 inline-flex items-center gap-2 text-sm text-gray-400 transition hover:text-purple-300"
+            to="/clubs"
+            className="mb-6 inline-flex items-center gap-2 text-sm text-gray-400 transition hover:text-purple-300"
           >
             <ArrowLeft size={18} />
             Back to Clubs
@@ -394,128 +389,6 @@ function ClubDetails() {
 
           </div>
         </section>
-
-        {/* VISION AND MISSION */}
-        {(club.vision || club.mission) && (
-          <section>
-
-            <SectionHeading
-              icon={Target}
-              title="Our Purpose"
-              subtitle="The vision and mission that guide our community."
-            />
-
-            <div className="grid gap-6 md:grid-cols-2">
-
-              {club.vision && (
-                <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-[#111827] p-7">
-
-                  <div className="mb-5 inline-flex rounded-xl bg-purple-500/15 p-3 text-purple-400">
-                    <Target size={25} />
-                  </div>
-
-                  <h3 className="mb-3 text-xl font-bold">
-                    Our Vision
-                  </h3>
-
-                  <p className="leading-7 text-gray-400">
-                    {club.vision}
-                  </p>
-
-                </div>
-              )}
-
-              {club.mission && (
-                <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-[#111827] p-7">
-
-                  <div className="mb-5 inline-flex rounded-xl bg-blue-500/15 p-3 text-blue-400">
-                    <Lightbulb size={25} />
-                  </div>
-
-                  <h3 className="mb-3 text-xl font-bold">
-                    Our Mission
-                  </h3>
-
-                  <p className="leading-7 text-gray-400">
-                    {club.mission}
-                  </p>
-
-                </div>
-              )}
-
-            </div>
-          </section>
-        )}
-
-        {/* DOMAINS SECTION */}
-        {club.domains?.length > 0 && (
-          <section>
-
-            <SectionHeading
-              icon={Code2}
-              title="Our Domains"
-              subtitle="Explore the areas where our members learn and innovate."
-            />
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-
-              {club.domains.map((domain, index) => (
-                <div
-                  key={index}
-                  className="rounded-2xl border border-white/10 bg-[#111827] p-6 transition hover:border-purple-500/40"
-                >
-
-                  <div className="mb-5 inline-flex rounded-xl bg-purple-500/15 p-3 text-purple-400">
-                    <Code2 size={23} />
-                  </div>
-
-                  <h3 className="mb-3 text-lg font-bold">
-                    {domain.title}
-                  </h3>
-
-                  <p className="text-sm leading-7 text-gray-400">
-                    {domain.desc}
-                  </p>
-
-                </div>
-              ))}
-
-            </div>
-          </section>
-        )}
-
-        {/* ACHIEVEMENTS SECTION */}
-        {club.achievements?.length > 0 && (
-          <section>
-
-            <SectionHeading
-              icon={Trophy}
-              title="Our Achievements"
-              subtitle="Milestones and accomplishments of our club."
-            />
-
-            <div className="grid gap-4 md:grid-cols-2">
-
-              {club.achievements.map((achievement, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-4 rounded-xl border border-white/10 bg-[#111827] p-5"
-                >
-
-                  <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-400">
-                    <Trophy size={20} />
-                  </div>
-
-                  <p className="pt-1 leading-7 text-gray-300">
-                    {achievement}
-                  </p>
-
-                </div>
-              ))}
-
-            </div>
-          </section>
-        )}
 
         {/* CLUB EVENTS SECTION */}
         <section>
@@ -688,32 +561,6 @@ function ClubDetails() {
             </div>
           </section>
         )}
-
-        {/* BOTTOM CTA */}
-        <section className="rounded-3xl border border-purple-500/20 bg-gradient-to-r from-purple-900/30 via-[#111827] to-blue-900/20 px-6 py-12 text-center md:px-12">
-
-          <Users
-            size={35}
-            className="mx-auto mb-5 text-purple-400"
-          />
-
-          <h2 className="mb-3 text-2xl font-bold md:text-3xl">
-            Be Part of {club.name}
-          </h2>
-
-          <p className="mx-auto mb-7 max-w-xl text-gray-400">
-            Explore opportunities, connect with fellow students and grow together.
-          </p>
-
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-7 py-3 font-semibold text-white transition hover:bg-purple-500"
-          >
-            Explore Clubs
-            <ArrowUpRight size={18} />
-          </Link>
-
-        </section>
 
       </main>
     </div>

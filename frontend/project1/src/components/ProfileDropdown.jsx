@@ -1,14 +1,36 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-function ProfileDropdown({ email, onLogout }) {
+function ProfileDropdown({ email, onLogout, role }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const name = email?.split('@')[0] || 'Student';
+  const userRole = role || localStorage.getItem('campusUserRole') || 'student';
+  const isAdmin = userRole === 'admin';
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 rounded-full border border-slate-700 bg-[#10172A] p-2 transition hover:border-cyan-400"
@@ -60,6 +82,19 @@ function ProfileDropdown({ email, onLogout }) {
             >
               My Events
             </Link>
+
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setIsOpen(false)}
+                className="mt-1 flex items-center justify-between rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-sm font-semibold text-purple-300 hover:bg-purple-500/20"
+              >
+                <span>🛡️ Admin Dashboard</span>
+                <span className="rounded bg-purple-400/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-purple-300">
+                  Admin
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="mt-3 border-t border-slate-700 pt-3">

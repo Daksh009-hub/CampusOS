@@ -69,7 +69,7 @@ function ClubsSection() {
   return (
     <section
       id="clubs"
-      className="relative scroll-mt-28 overflow-hidden py-20"
+      className="relative scroll-mt-28 overflow-hidden pt-6 pb-20"
     >
 
       {/* Background Glow */}
