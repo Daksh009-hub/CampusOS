@@ -70,24 +70,26 @@ function Navbar({ isLoggedIn, onLogout, userEmail, role }) {
           {isLoggedIn && (
             <Link
               to="/organize-event"
-              className="hidden sm:flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-105 md:px-5 md:py-3 md:text-sm"
+              className="hidden md:flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-500/20 transition hover:scale-105 md:text-sm"
             >
               Organize Event
               <ArrowUpRight size={16} />
             </Link>
           )}
 
-          {/* Profile Dropdown / Login Button */}
+          {/* Profile Dropdown / Login Button (Desktop only - hidden on mobile where hamburger menu is shown) */}
           {isLoggedIn ? (
-            <ProfileDropdown
-              email={userEmail}
-              onLogout={onLogout}
-              role={role}
-            />
+            <div className="hidden md:block">
+              <ProfileDropdown
+                email={userEmail}
+                onLogout={onLogout}
+                role={role}
+              />
+            </div>
           ) : (
             <Link
               to="/login"
-              className="rounded-full border border-cyan-400/50 px-4 py-2 text-xs font-bold text-cyan-400 transition hover:bg-cyan-400 hover:text-[#050816] sm:px-6 sm:py-2.5 sm:text-sm"
+              className="hidden md:block rounded-full border border-cyan-400/50 px-6 py-2.5 text-sm font-bold text-cyan-400 transition hover:bg-cyan-400 hover:text-[#050816]"
             >
               Login
             </Link>
@@ -110,6 +112,23 @@ function Navbar({ isLoggedIn, onLogout, userEmail, role }) {
       {mobileMenuOpen && (
         <div className="border-t border-slate-800/80 bg-[#080D1C]/98 px-5 py-4 backdrop-blur-2xl md:hidden">
           <div className="flex flex-col gap-2">
+
+            {/* User Profile Card on Mobile */}
+            {isLoggedIn && (
+              <div className="mb-2 flex items-center gap-3 rounded-xl border border-slate-800 bg-[#10172A] p-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-400 font-bold text-white shadow-md">
+                  {(userEmail?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-white capitalize">
+                    {userEmail?.split('@')[0] || 'Student'}
+                  </p>
+                  <p className="truncate text-xs text-slate-400">
+                    {userEmail}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Nav Links */}
             {navLinks.map((link) => {

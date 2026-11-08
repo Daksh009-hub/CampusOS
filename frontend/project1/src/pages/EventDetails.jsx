@@ -418,94 +418,83 @@ function EventDetails() {
             </span>
           </Link>
 
-          <Link
-            to="/#events"
-            className="text-sm font-semibold text-slate-400 transition hover:text-cyan-400"
-          >
-            ← All Events
-          </Link>
-
         </div>
       </nav>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
+      {/* Full-Width Hero Banner */}
+      <section
+        className={`relative flex min-h-[420px] flex-col justify-end overflow-hidden border-b border-white/10 ${
+          event.imageUrl ? 'bg-[#080D1C]' : `bg-gradient-to-br ${bannerStyle}`
+        }`}
+      >
+        {event.imageUrl ? (
+          <>
+            {/* Full clarity user uploaded image */}
+            <img
+              src={event.imageUrl}
+              alt={event.title}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {/* Soft dark gradient overlays for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-[#050816]/75 to-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050816]/90 via-[#050816]/40 to-transparent" />
+          </>
+        ) : (
+          <>
+            {/* Decorative rings only when no image is uploaded */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-[#050816] to-purple-900/30" />
+            <div className="absolute -right-20 -top-24 h-96 w-96 rounded-full border border-white/10" />
+            <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full border border-white/10" />
+          </>
+        )}
 
-        {/* Hero Banner */}
-        <section
-          className={`relative flex min-h-[380px] flex-col justify-end overflow-hidden rounded-3xl ${
-            event.imageUrl ? 'bg-[#080D1C]' : `bg-gradient-to-br ${bannerStyle}`
-          } p-8 md:p-14`}
-        >
-          {event.imageUrl ? (
-            <>
-              {/* Full clarity user uploaded image */}
-              <img
-                src={event.imageUrl}
-                alt={event.title}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              {/* Soft dark gradient overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-[#050816]/70 to-black/30" />
-            </>
-          ) : (
-            <>
-              {/* Decorative rings only when no image is uploaded */}
-              <div className="absolute -right-20 -top-24 h-80 w-80 rounded-full border border-white/20" />
-              <div className="absolute -bottom-32 -left-16 h-96 w-96 rounded-full border border-white/20" />
-            </>
-          )}
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 py-12 md:px-8 md:py-16">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-cyan-300 backdrop-blur-md">
+                {event.club || 'CampusOS'}
+              </span>
 
-          <div className="relative z-10">
-
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap gap-3">
-                <span className="rounded-full border border-white/30 bg-black/20 px-4 py-2 text-sm backdrop-blur">
-                  {event.club || 'CampusOS'}
-                </span>
-
-                <span className="rounded-full border border-white/30 bg-black/20 px-4 py-2 text-sm backdrop-blur">
-                  {event.eventType || 'General'}
-                </span>
-              </div>
-
-              {/* Creator Edit & Delete Action Buttons */}
-              {isOwner && (
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleOpenEdit}
-                    className="flex items-center gap-2 rounded-xl border border-white/30 bg-black/40 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20 hover:scale-105"
-                  >
-                    <Edit2 size={16} className="text-cyan-400" />
-                    Edit Event
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="flex items-center gap-2 rounded-xl border border-red-500/40 bg-red-950/40 px-4 py-2 text-sm font-semibold text-red-300 backdrop-blur transition hover:bg-red-900/60 hover:scale-105"
-                  >
-                    <Trash2 size={16} />
-                    Delete Event
-                  </button>
-                </div>
-              )}
+              <span className="rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-purple-300 backdrop-blur-md">
+                {event.eventType || 'General'}
+              </span>
             </div>
 
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
-              CampusOS Event
-            </p>
+            {/* Creator Edit & Delete Action Buttons */}
+            {isOwner && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleOpenEdit}
+                  className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white backdrop-blur-md transition hover:bg-white/20 hover:scale-105"
+                >
+                  <Edit2 size={15} className="text-cyan-400" />
+                  Edit Event
+                </button>
 
-            <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight md:text-6xl">
-              {event.title}
-            </h1>
-
-            <p className="mt-5 max-w-2xl text-base leading-7 text-white/80 md:text-lg">
-              {event.description}
-            </p>
-
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-950/50 px-4 py-2 text-xs font-bold text-red-300 backdrop-blur-md transition hover:bg-red-900/60 hover:scale-105"
+                >
+                  <Trash2 size={15} />
+                  Delete Event
+                </button>
+              </div>
+            )}
           </div>
-        </section>
+
+          <h1 className="mt-3 max-w-4xl text-3xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl">
+            {event.title}
+          </h1>
+
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-300 md:text-base">
+            {event.description}
+          </p>
+        </div>
+      </section>
+
+      <main className="mx-auto max-w-6xl px-6 py-10">
 
         {/* Event Information */}
         <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -596,18 +585,6 @@ function EventDetails() {
           )}
 
         </section>
-
-        {/* Back Link */}
-        <div className="py-12 text-center">
-
-          <Link
-            to="/#events"
-            className="font-semibold text-cyan-400 transition hover:text-white"
-          >
-            ← Explore More Events
-          </Link>
-
-        </div>
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (

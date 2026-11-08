@@ -260,10 +260,6 @@ function EventsSection() {
 
                 <div className="relative z-10">
 
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-white/70">
-                    CampusOS presents
-                  </p>
-
                   <h3 className="max-w-sm text-2xl font-extrabold text-white">
                     {event.title}
                   </h3>
@@ -311,10 +307,6 @@ function EventsSection() {
 
                   <span className="font-semibold text-cyan-400 transition group-hover:text-white">
                     View Event Details
-                  </span>
-
-                  <span className="text-xl text-cyan-400 transition group-hover:translate-x-1">
-                    ↗
                   </span>
 
                 </div>
